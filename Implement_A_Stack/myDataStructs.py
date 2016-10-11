@@ -58,3 +58,45 @@ class myStack(object):
         self.contents = starting_state
 
         return match_loc
+
+    def size(self):
+        starting_state = copy.deepcopy(self.contents)
+        return_val = 0
+
+        while not self.contents.empty():
+            return_val +=1
+            self.pop()
+
+        return return_val
+
+
+class myQueue(object):
+    """My queue implementation"""
+    def __init__(self):
+        self.main_stack = myStack()
+        self.reserve_stack = myStack()
+
+
+    def empty(self):
+        result = ( self.left_stack.empty() and self.right_stack.empty() )
+        return result
+
+
+    def enqueue(self, val):
+        self.main_stack.push(val)
+
+
+    def dequeue(self):
+        while not self.main_stack.empty():
+            self.reserve_stack.push(self.main_stack.pop())
+
+        return_val = self.reserve_stack.pop()
+
+        while not self.reserve_stack.empty():
+            self.main_stack.push(self.reserve_stack.pop())
+
+        return return_val
+
+    def size(self):
+        return_val = self.main_stack.size()
+        return return_val
