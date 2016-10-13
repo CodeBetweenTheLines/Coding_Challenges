@@ -1,22 +1,22 @@
 # -*- coding: utf-8 -*-
 import copy
 
-class MyStack(object): # PascalCase for class names
-    """My stack implementation""" # Triple quotes for docstring
+class MyStack(object):
+    """My stack implementation"""
 
     def __init__(self):
-        self.__contents = () # Double underscore to make implementation details private
+        self.__contents = ()
 
 
     def empty(self):
-        return len(self.__contents) == 0 # Multiple lines just to return boolean
+        return len(self.__contents) == 0
 
 
     def push(self, val):
         self.__contents = (val, self.__contents)
 
 
-    def pop(self): # Return None or raise exception?
+    def pop(self):
         try:
             val = self.__contents[0]
             self.__contents = self.__contents[1]
@@ -25,20 +25,20 @@ class MyStack(object): # PascalCase for class names
             return None
 
 
-    def peek(self): # Return None or raise exception?
-        try: # Popping and re-pushing adds unnecessary complexity, though I see where you were coming from for DRYness. Could break out the WET part as a decorator?
+    def peek(self):
+        try:
             return self.__contents[0]
         except:
             return None
 
 
-    def search(self, match_val): # Copying is space inefficient, and iterating twice (once for the copy) is inefficient
+    def search(self, match_val):
         current_loc = 0
         match_loc = -1
         val = None
         starting_state = copy.deepcopy(self.__contents)
 
-        while not self.empty(): # May as well just make it the loop condition
+        while not self.empty():
             current_loc += 1
             val = self.pop()
 
@@ -50,35 +50,35 @@ class MyStack(object): # PascalCase for class names
         return match_loc
 
 
-    def size(self): # Could be made more efficient. First thought is to keep a self.size counter and increment/decrement as necessary
+    def size(self):
         starting_state = copy.deepcopy(self.__contents)
         return_val = 0
 
-        while not self.empty(): # Can't do .empty() on the tuple itself
+        while not self.empty():
             return_val +=1
             self.pop()
 
-        self.__contents = starting_state # Don't forget to put the contents back
+        self.__contents = starting_state
         return return_val
 
 
-class MyQueue(object): # PascalCase for class names
-    """My queue implementation""" # Can't peek?
+class MyQueue(object):
+    """My queue implementation"""
 
     def __init__(self):
-        self.__main_stack = MyStack() # Double underscore to make implementation details private
-        self.__reserve_stack = MyStack() # Double underscore to make implementation details private
+        self.__main_stack = MyStack()
+        self.__reserve_stack = MyStack()
 
 
     def empty(self):
-        return self.__main_stack.empty() and self.__reserve_stack.empty() # Storing a variable just to return it, and wrong var names
+        return self.__main_stack.empty() and self.__reserve_stack.empty()
 
 
     def enqueue(self, val):
         self.__main_stack.push(val)
 
 
-    def dequeue(self): # Moving everything between the two stacks every time is inefficient
+    def dequeue(self):
         while not self.__main_stack.empty():
             self.__reserve_stack.push(self.__main_stack.pop())
 
@@ -91,4 +91,4 @@ class MyQueue(object): # PascalCase for class names
 
 
     def size(self):
-        return self.__main_stack.size() # Storing a variable just to return it
+        return self.__main_stack.size()
