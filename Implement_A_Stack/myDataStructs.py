@@ -2,7 +2,7 @@
 import copy
 
 class MyStack(object): # PascalCase for class names
-    """My stack implementation"""
+    """My stack implementation""" # Triple quotes for docstring
 
     def __init__(self):
         self.__contents = () # Double underscore to make implementation details private
