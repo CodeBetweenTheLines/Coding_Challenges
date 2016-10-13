@@ -1,53 +1,44 @@
 # -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
 import copy
 
-class myStack(object):
-    'My stack implementation'
+class MyStack(object): # PascalCase for class names
+    """My stack implementation"""
+
     def __init__(self):
-        self.contents = ()
+        self.__contents = () # Double underscore to make implementation details private
 
 
     def empty(self):
-        if len(self.contents):
-            return False
-        else:
-            return True
+        return len(self.__contents) == 0 # Multiple lines just to return boolean
 
 
     def push(self, val):
-        self.contents = (val, self.contents)
+        self.__contents = (val, self.__contents)
 
 
-    def pop(self):
+    def pop(self): # Return None or raise exception?
         try:
-            val = self.contents[0]
-            self.contents = self.contents[1]
+            val = self.__contents[0]
+            self.__contents = self.__contents[1]
             return val
         except:
             return None
 
 
-    def peek(self):
-        val = self.pop()
-        self.push(val)
-        return val
+    def peek(self): # Return None or raise exception?
+        try: # Popping and re-pushing adds unnecessary complexity, though I see where you were coming from for DRYness. Could break out the WET part as a decorator?
+            return self.__contents[0]
+        except:
+            return None
 
 
-    def search(self, match_val):
+    def search(self, match_val): # Copying is space inefficient, and iterating twice (once for the copy) is inefficient
         current_loc = 0
         match_loc = -1
         val = None
-        starting_state = copy.deepcopy(self.contents)
+        starting_state = copy.deepcopy(self.__contents)
 
-        while True:
-            if self.empty():
-                break
-
+        while not self.empty(): # May as well just make it the loop condition
             current_loc += 1
             val = self.pop()
 
@@ -55,48 +46,49 @@ class myStack(object):
                 match_loc = current_loc
                 break
 
-        self.contents = starting_state
-
+        self.__contents = starting_state
         return match_loc
 
-    def size(self):
-        starting_state = copy.deepcopy(self.contents)
+
+    def size(self): # Could be made more efficient. First thought is to keep a self.size counter and increment/decrement as necessary
+        starting_state = copy.deepcopy(self.__contents)
         return_val = 0
 
-        while not self.contents.empty():
+        while not self.empty(): # Can't do .empty() on the tuple itself
             return_val +=1
             self.pop()
 
+        self.__contents = starting_state # Don't forget to put the contents back
         return return_val
 
 
-class myQueue(object):
-    """My queue implementation"""
+class MyQueue(object): # PascalCase for class names
+    """My queue implementation""" # Can't peek?
+
     def __init__(self):
-        self.main_stack = myStack()
-        self.reserve_stack = myStack()
+        self.__main_stack = MyStack() # Double underscore to make implementation details private
+        self.__reserve_stack = MyStack() # Double underscore to make implementation details private
 
 
     def empty(self):
-        result = ( self.left_stack.empty() and self.right_stack.empty() )
-        return result
+        return self.__main_stack.empty() and self.__reserve_stack.empty() # Storing a variable just to return it, and wrong var names
 
 
     def enqueue(self, val):
-        self.main_stack.push(val)
+        self.__main_stack.push(val)
 
 
-    def dequeue(self):
-        while not self.main_stack.empty():
-            self.reserve_stack.push(self.main_stack.pop())
+    def dequeue(self): # Moving everything between the two stacks every time is inefficient
+        while not self.__main_stack.empty():
+            self.__reserve_stack.push(self.__main_stack.pop())
 
-        return_val = self.reserve_stack.pop()
+        return_val = self.__reserve_stack.pop()
 
-        while not self.reserve_stack.empty():
-            self.main_stack.push(self.reserve_stack.pop())
+        while not self.__reserve_stack.empty():
+            self.__main_stack.push(self.__reserve_stack.pop())
 
         return return_val
+
 
     def size(self):
-        return_val = self.main_stack.size()
-        return return_val
+        return self.__main_stack.size() # Storing a variable just to return it
