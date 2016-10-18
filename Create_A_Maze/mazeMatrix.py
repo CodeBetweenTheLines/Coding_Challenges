@@ -18,11 +18,17 @@ class MazeMatrix(object):
                                 self.n_cols * self.cols_per_cell))
         self.room_list = list(itertools.product(range(self.n_cols),
                                                 range(self.n_rows)))
-        self.relative_directions = {"North": (0,-1), "South": (0,1),
-                                    "East": (1,0), "West":(-1,0)}
+                                    ## THESE INDICES AREN'T RIGHT.
+                                    ## COME BACK TO THIS.
+        self.relative_directions = {"North": (0,1), "South": (0,-1),
+                                    "East": (-1,0), "West":(1,0)}
+        self.direction_pairings = {"North": "South",
+                                   "South": "North",
+                                   "East": "West",
+                                   "West": "East"}
         self.set_centers()
 
-    def get_cell(self, col_loc, row_loc):
+    def get_cell(self, (col_loc, row_loc)):
         col_start = col_loc * self.cols_per_cell
         col_end = (col_loc + 1) * self.cols_per_cell
         row_start = row_loc * self.rows_per_cell
@@ -40,17 +46,27 @@ class MazeMatrix(object):
         or (not (0 <= neighbor_row < self.n_rows))):
             return None
 
-        return self.get_cell(neighbor_col, neighbor_row)
+        return self.get_cell((neighbor_col, neighbor_row))
 
 
     def set_centers(self):
         for (col, row) in self.room_list:
-             self.get_cell(col, row)[1, 1] = self.connect_flag
+             self.get_cell((col, row))[1, 1] = self.connect_flag
         return None
 
 
-    def connect_cells(self, current_col, current_row, direction="North"):
+    def connect_cells(self, (current_col, current_row), direction="North"):
+        current_cell = self.get_cell((current_col, current_row))
+        neighbor_cell = self.get_neighbor_cell((current_col, current_row),
+                                                direction=direction)
+        cur_cell_rel_dir = self.relative_directions[direction]
+        current_cell[cur_cell_rel_dir] = self.connect_flag
 
+        nei_cnxn_dir = self.direction_pairings[direction]
+        nei_cell_rel_dir = self.relative_directions[nei_cnxn_dir]
+        neighbor_cell[nei_cell_rel_dir] = self.connect_flag
+
+        return None
 
 
     def print_maze(self):
