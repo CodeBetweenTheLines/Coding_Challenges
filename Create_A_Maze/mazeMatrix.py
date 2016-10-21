@@ -9,7 +9,8 @@ import itertools
 
 class MazeMatrix(object):
     def __init__(self, n_cols, n_rows):
-        self.connect_flag = 1
+        self.connect_flag = 2
+        self.room_flag = 1
         self.n_cols = n_cols
         self.n_rows = n_rows
         self.cols_per_cell = 3
@@ -39,8 +40,6 @@ class MazeMatrix(object):
 
 
     def get_neighbor_cell(self, (current_col, current_row), direction="North"):
-        print "Getting neighbor to the ", direction
-
         rel_dir = self.relative_directions[direction]
         (neighbor_col, neighbor_row) = (current_col + rel_dir[0],
                                         current_row + rel_dir[1])
@@ -48,24 +47,20 @@ class MazeMatrix(object):
         or (not (0 <= neighbor_row < self.n_rows))):
             return None
 
-        print "Neighbor row: ", neighbor_row
-        print "Neighbor column: ", neighbor_col
         return self.get_cell((neighbor_col, neighbor_row))
 
 
     def set_centers(self):
         for (col, row) in self.room_list:
-             self.get_cell((col, row))[1, 1] = self.connect_flag
+             self.get_cell((col, row))[1, 1] = self.room_flag
         return None
 
 
     def make_door(self, (current_col, current_row), direction="North"):
         current_cell = self.get_cell((current_col, current_row))
         rel_dir = self.relative_directions[direction]
-        print direction, "is ", rel_dir[0], "in the x-direction, and", rel_dir[1], "in the y-direction"
         door_coords = [x+1 for x in rel_dir]
-        print "door_coords = ", door_coords
-        current_cell[door_coords[1], door_coords[0]] = 2
+        current_cell[door_coords[1], door_coords[0]] = self.connect_flag
 
     def connect_neighbors(self, (current_col, current_row), direction="North"):
         try:
@@ -92,7 +87,7 @@ class MazeMatrix(object):
 
 
 def tests():
-    testMaze = MazeMatrix(2,2)
+    testMaze = MazeMatrix(3,3)
     testMaze.print_maze()
     print "\n\n"
     testMaze.connect_neighbors((0,0), direction="South")
@@ -106,3 +101,30 @@ def tests():
     testMaze.connect_neighbors((0,0), direction="North")
     testMaze.print_maze()
 
+    testMaze.connect_neighbors((2,0), direction="South")
+    testMaze.connect_neighbors((1,1), direction="South")
+    testMaze.connect_neighbors((1,2), direction="East")
+    testMaze.connect_neighbors((2,2), direction="North")
+
+    blank_char = " . "
+    h_char = "---"
+    v_char = " | "
+    room_char = " X "
+
+    mazePicture = []
+    for r, row in enumerate(testMaze.matrix):
+        temp = []
+        for c, col in enumerate(row):
+            if testMaze.matrix[r,c] == 0:
+                temp.append( blank_char )
+            elif testMaze.matrix[r,c] == 1:
+                temp.append( room_char)
+            elif testMaze.matrix[r,c] == 2:
+                if 1. in row:
+                    temp.append( h_char )
+                else:
+                    temp.append( v_char )
+        mazePicture.append(temp)
+
+    for row in mazePicture:
+        print ''.join(row)
