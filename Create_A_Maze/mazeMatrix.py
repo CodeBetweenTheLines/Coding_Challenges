@@ -32,7 +32,7 @@ class MazeMatrix(object):
         return cell
 
 
-    def get_neighbor_cell(self, (current_col, current_row), direction="North"):
+    def get_neighbor_cell(self, (current_col, current_row), direction=None):
         rel_dir = self.relative_directions[direction]
         (neighbor_col, neighbor_row) = (current_col + rel_dir[0],
                                         current_row + rel_dir[1])
@@ -49,9 +49,19 @@ class MazeMatrix(object):
         return None
 
 
-    def connect_cells(self, current_col, current_row, direction="North"):
+    def connect_cells(self, current_col, current_row, direction=None):
+        neighbor_cell = self.get_neighbor_cell((current_col, current_row),
+                                               direction=direction)
+        if neighbor_cell and direction:
+            connect_current_to_neighbor()
+            connect_neighbor_to_current()
+            
 
-
+    def connect_cell_to_neighbor(self, (current_col, current_row), 
+                                 direction=None):
+        
+        neighbor_loc = 
+        
 
     def print_maze(self):
         for row in self.matrix:

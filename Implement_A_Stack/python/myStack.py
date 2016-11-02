@@ -40,6 +40,7 @@ class myStack(object):
     def search(self, match_val):
         loc = 0
         val = None
+        _temp_stack = myStack()
         print loc, self.contents
         
         while True:
@@ -48,6 +49,7 @@ class myStack(object):
             
             loc += 1
             val = self.pop()
+            _temp_stack = (val, _temp_stack)
             
             if val == match_val:
                 return loc
